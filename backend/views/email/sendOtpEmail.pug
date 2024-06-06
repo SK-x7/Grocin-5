@@ -1,0 +1,40 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Email Verification Code
+    style.
+      body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+      text-align: center;
+      }
+      .container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+      color: #007bff;
+      }
+      .verification-code {
+      font-size: 24px;
+      font-weight: bold;
+      color: #007bff;
+      }
+  body
+    .container
+      h1 Email Verification Code
+      p Hi, #{firstName},
+      p Thank you for signing up! To complete your registration, use the following six-digit verification code:
+      p.verification-code #{otp}
+      // #{code}
+      // Replace '123456' with the actual six-digit code generated in your Node.js script
+      p If you didn&apos;t sign up, you can ignore this email.
+      p Best regards,
+      p Your Name
