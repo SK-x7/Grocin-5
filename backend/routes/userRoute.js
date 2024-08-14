@@ -32,12 +32,14 @@ router.patch(
     
     router.get("/getUser",userController.getAUser);
     router.get("/isLoggedIn",authController.protect,userController.isLoggedIn);
+    router.post("/logout",authController.protect,userController.logout);
     
     
     
     
     router.route('/').get(userController.getAllUser).post(userController.createUser);
-    router.route('/:id').get(userController.getUser);
+    router.route('/:id').get(userController.getUser).patch(userController.updateUser);
+    router.route('/:id/getSavedAddresses').get(userController.getSavedAddressesOfUser);
     
     
     module.exports = router;

@@ -23,6 +23,7 @@ const cartSlice = createSlice({
   reducers: {
     addItem(state, action) {
       // payload = newItem
+      console.log(action.payload,"uiuqyufwuufgf kghhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh🤬🤬")
       state.cart.push(action.payload);
       state.grandTotal+=action.payload?.productPrice;
       state.grandTotalAfterDiscount+=action.payload?.productPriceAfterDiscount;
@@ -44,12 +45,15 @@ const cartSlice = createSlice({
     decreaseItemQuantity(state, action) {
       // payload = pizzaId
       const item = state?.cart?.find((item) => item?.productId === action.payload);
-
+      // console.log(item.quantity,"🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️")
       item.quantity--;
+      console.log(item.totalPrice,"🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️🅿️")
       item.totalPrice = item?.quantity * item?.productPrice;
       state.grandTotal-=item?.productPrice;
+      if(state?.grandTotal<0) state.grandTotal=0;
       item.totalPriceAfterDiscount = item?.quantity * item?.productPriceAfterDiscount;
       state.grandTotalAfterDiscount-=item?.productPriceAfterDiscount;
+      if(state?.grandTotalAfterDiscount<0) state.grandTotalAfterDiscount=0;
       if (item.quantity === 0) cartSlice.caseReducers.deleteItem(state, action);
     },
     clearCart(state) {
@@ -64,8 +68,73 @@ const cartSlice = createSlice({
       // console.log(isopen);
       // console.log("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
       state.isSideCartOpen=!(state?.isSideCartOpen);
-      }
+      },
     
+      //logic for handeling the "Re-order" functionality
+      
+      //SECTION
+      
+      increaseItemQuantityByValue(state,action){ 
+        
+        // 1--check if it is already present in cart or not
+        const item = state?.cart?.find((item) => item?.productId === action.payload?.productData?.id);
+        
+        // 2--if item is already present in cart
+        if(item&&(item!==undefined)){
+          item.quantity+=action.payload?.productQuantity;
+          item.totalPrice = item?.quantity * item?.productPrice;
+          state.grandTotal+=item?.productPrice;
+          item.totalPriceAfterDiscount = item?.quantity * item?.productPriceAfterDiscount;
+          state.grandTotalAfterDiscount+=item?.productPriceAfterDiscount;
+        }else{
+          const newItem={
+            productId: action.payload?.productData?.id,
+            productName: action.payload?.productData?.name,
+            productImageUrl: action.payload?.productData?.image,
+            productPrice: action.payload?.productData?.price,
+            productPriceAfterDiscount: action.payload?.productData?.priceAfterDiscount,
+            quantity: action.payload?.productQuantity,
+            totalPrice: action.payload?.productData?.price*(action.payload?.productQuantity),
+            totalPriceAfterDiscount: action.payload?.productData?.priceAfterDiscount*(action.payload?.productQuantity),
+            unit: action.payload?.productData?.unit,
+          }
+          
+          console.log(newItem)
+          
+          state.cart.push(newItem);
+          state.grandTotal+=newItem?.totalPrice;
+          state.grandTotalAfterDiscount+=newItem?.totalPriceAfterDiscount;
+        }
+        
+      }
+      ,
+      
+      decreaseItemQuantityByValue(state, action) {
+        // payload = pizzaId
+        const item = state?.cart?.find((item) => item?.productId === action.payload?.productData?.id);
+        item.quantity-=action.payload?.productQuantity;
+        
+  
+        item.totalPrice = item?.quantity * item?.productPrice;
+        state.grandTotal-=(item?.productPrice)*action.payload?.productQuantity;
+        if(state?.grandTotal<0) state.grandTotal=0;
+        
+        item.totalPriceAfterDiscount = item?.quantity * item?.productPriceAfterDiscount;
+        state.grandTotalAfterDiscount-=item?.productPriceAfterDiscount*action.payload?.productQuantity;
+        if(state?.grandTotalAfterDiscount<0) state.grandTotalAfterDiscount=0;
+        if (item.quantity === 0) state.cart = state?.cart?.filter((item) => item?.productId !== action.payload?.productData?.id);
+        // item.quantity+=action.payload?.productQuantity;
+        // item.totalPrice = item?.quantity * item?.productPrice;
+        // state.grandTotal+=item?.productPrice;
+        // item.totalPriceAfterDiscount = item?.quantity * item?.productPriceAfterDiscount;
+        // state.grandTotalAfterDiscount+=item?.productPriceAfterDiscount;
+      },
+      
+      
+      //!SECTION
+      
+      
+      
   },
 });
 
@@ -75,7 +144,9 @@ export const {
   increaseItemQuantity,
   decreaseItemQuantity,
   clearCart,
-  setIsSideCartOpen
+  setIsSideCartOpen,
+  increaseItemQuantityByValue,
+  decreaseItemQuantityByValue
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

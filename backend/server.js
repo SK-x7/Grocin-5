@@ -10,10 +10,12 @@ mongoose.connect(DB,{
 
 const port=process.env.PORT;
 const server = app.listen(port,()=>{
-    console.log(`Welcome to the server...${port}`)
+    console.log(`Welcome to the server...${port}`);
+    require('./utils/jobSchedulars/cancelUnpaidOrders');
+    require('./utils/jobSchedulars/updateArrivedOrders');
 })
 
-//handing unhandled rejection like changing of passwords of database in between
+//handing un''handled rejection like changing of passwords of database in between
 process.on('unhandledRejection',(err)=>{
     console.log("Unhandled Rejections⚠️....shutting down🥲")
     console.log(err);

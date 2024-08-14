@@ -77,6 +77,7 @@ exports.createProduct=catchAsync(async(req,res,next)=>{
 
  
 exports.getProduct = catchAsync(async(req,res,next)=>{
+    console.log(req.originalUrl)
     if(!req.params.id)  return next(new AppError("Please provide the id of product,you want to update",404));
     const product = await Product.findById(req.params.id).populate('reviews');
     if(!product)  return next(new AppError("No product found with that id.",404))
@@ -126,3 +127,56 @@ exports.updateProduct = catchAsync(async (req,res,next)=>{
         }
     })
 })
+
+
+exports.searchProduct=catchAsync(async (req,res,next)=>{
+    console.log(Date.now());
+    console.log(req.query);
+    const query = req.query.q;
+    if(!query)   return next(new AppError("Query paramter is required",404));
+        console.log(query,req.query)
+        // Use a case-insensitive regex to search both the name and tags
+        // const regex = new RegExp(query, 'i');
+        const regex = new RegExp(`\\b${query}`, 'i');
+        console.log(regex);
+        const results = await Product.find({
+            $or: [{ name: regex }, { tags: regex }]
+        })
+        // .lean(); // .lean() returns plain JavaScript objects instead of Mongoose documents
+
+        // Filter out duplicates based on the product's _id
+        const uniqueResults = Array.from(new Set(results.map(product => product._id.toString())))
+            .map(id => results.find(product => product._id.toString() === id));
+
+        res.status(200).json({
+            status: 'success',
+            results: uniqueResults.length,
+            data:{
+                uniqueResults
+            }
+        });
+})
+
+
+// app.get('/search', async (req, res) => {
+//     const query = req.query.q;
+//     if (!query) {
+//         return res.status(400).json({ error: 'Query parameter is required' });
+//     }
+
+//     try {
+//         // Use a case-insensitive regex to search both the name and tags
+//         const regex = new RegExp(query, 'i');
+//         const results = await Product.find({
+//             $or: [{ name: regex }, { tags: regex }]
+//         }).lean(); // .lean() returns plain JavaScript objects instead of Mongoose documents
+
+//         // Filter out duplicates based on the product's _id
+//         const uniqueResults = Array.from(new Set(results.map(product => product._id.toString())))
+//             .map(id => results.find(product => product._id.toString() === id));
+
+//         res.json(uniqueResults);
+//     } catch (error) {
+//         res.status(500).json({ error: 'Internal Server Error' });
+//     }
+// });

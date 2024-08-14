@@ -1,3 +1,4 @@
+import { NavLink } from "react-router-dom"
 import Header from "../Header"
 
 function OrderArrived() {
@@ -18,7 +19,7 @@ function OrderArrived() {
                 <span>Total Amount: </span>
                 <span>$308.49</span>
             </div>
-            <button className="capitalize rounded-xl border py-[10px] px-5 !text-base bg-blue-200">View Order Details</button>
+            <NavLink to="/account/orders" className="capitalize rounded-xl border py-[10px] px-5 !text-base bg-blue-200">View Order Details</NavLink>
 
             </div>
         </section>

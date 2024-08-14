@@ -4,7 +4,7 @@ import BackButton from "../ui/buttons/BackButton";
 
 function FaqsQuestions() {
   const { faqCategoryId } = useParams();
-const category = Object.keys(faqData).find((key) => faqData[key].id === faqCategoryId);
+const category = Object?.keys(faqData)?.find((key) => faqData[key]?.id === faqCategoryId);
   console.log(category);
   const categoryData = faqData[category];
   console.log(categoryData);

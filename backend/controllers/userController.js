@@ -163,3 +163,29 @@ exports.updateUser =catchAsync(async (req, res, next) => {
       data: null
     });
   });
+  
+  exports.logout=(req, res,next) => {
+    console.log('logout');
+    res.clearCookie('jwt'); 
+    res.status(200).json({ message: 'Logged out successfully' });
+  };
+  
+  
+  exports.getSavedAddressesOfUser = catchAsync( async (req,res,next)=>{
+    const user = await User.findById(req.params.id).populate('reviews').populate("orders");
+    console.log(user);
+    let addresses;
+    if (!user) {
+      return next(new AppError('No user found with that ID', 404));
+    }else{
+      addresses=user.addresses;
+    }
+    res.status(200).json({
+      status: 'success',
+      message: "Saved addresses fetched successfully",
+      length: addresses.length,
+      data:{
+        addresses
+      }
+    })
+  })

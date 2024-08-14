@@ -4,7 +4,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 // import { useEffect, useLayoutEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 // import { Link } from "react-router-dom";
 import { getCategory } from "../../apis/categoryApi";
 import { getSubCategory } from "../../apis/subCategoryApi";
@@ -16,12 +16,19 @@ import {
   getCurrentQuantityById,
 } from "../../features/cartSlice";
 import UpdateItemQuantityButton from "../../components/cart/UpdateItemQuantityButton";
+// import UpdateItemQuantity2 from "../../components/cart/UpdateItemQuantity2";
 import { useRef } from "react";
+import Filter from "../../components/ui/buttons/Filter";
+import SortBy from "../../components/ui/buttons/SortBy";
 
 
 function ProductListingPage() {
   
   //
+  const [searchParams]=useSearchParams();
+  // const filterValue=searchParams.get("discount")||"in-stock";
+  // const filterValue=searchParams.get("discount")||"with-discount";
+  // console.log(filterValue);
   const cart = useSelector(getCart);
   const isSideCartOpen = useSelector((state) => state.cart.isSideCartOpen);
   let ref = useRef();
@@ -61,8 +68,8 @@ function ProductListingPage() {
   );
 
   // useEffect(() => {
-  //   setActiveSubCategory(category?.subcategories[0])
-  //   setSelectedSubCategory(category?.subcategories[0]?._id);
+    //   setActiveSubCategory(category?.subcategories[0])
+    //   setSelectedSubCategory(category?.subcategories[0]?._id);
   //   console.log(selectedSubCategory,"❌❌❌❌❌");
   //   return () => {
   //     setActiveSubCategory(false);
@@ -82,7 +89,7 @@ function ProductListingPage() {
   if (isFetching === false && isSuccess == true) {
     category = data?.data?.data?.category;
   }
-
+  
   const [activeList, setActiveList] = useState(false);
   const [activeSUbCategory, setActiveSubCategory] = useState(
     category?.subcategories[0] || ""
@@ -96,12 +103,35 @@ function ProductListingPage() {
   //   enabled:false
   //   // The query will not execute until the userId exists
   //   // enabled: !!activeSUbCategory,
-
+  
   // });
   console.log(isFetchingProducts, isProductFetchingSuccesful);
   console.log(products, "😆");
-
+  
   console.log(category, "🧨");
+  
+  // filter
+  const filterValue=searchParams.get("discount")||"all";
+  let filteredProducts;
+  if(filterValue==="all") filteredProducts = products;
+  if(filterValue==="with-discount") filteredProducts = products?.filter((product)=>product?.discount!==0);
+  if(filterValue==="no-discount") filteredProducts = products?.filter((product)=>product?.discount===0);
+  // const notInStockProducts=filteredProducts?.filter((product)=>product?.isInStock===false);
+  // const inStockProducts=filteredProducts?.filter((product)=>product?.isInStock===true);
+  // filteredProducts=inStockProducts?.push(notInStockProducts);
+  //sort
+  const sortBy = searchParams.get("sortBy") || "isINStock-desc";
+  const [field, direction] = sortBy.split("-");
+  console.log(field,direction,filteredProducts,"⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️")
+  const modifier = direction === "asc" ? 1 : -1;
+  const sortedProducts =
+    field === "name"
+      ? filteredProducts?.sort((a, b) => a.name.localeCompare(b.name) * modifier)
+      : filteredProducts?.sort((a, b) => (a[field] - b[field]) * modifier);
+  // const sortedProducts = filteredProducts?.sort(
+  //   (a, b) => (a[field] - b[field]) * modifier
+  // );
+  sortedProducts?.sort((a, b) => b.isInStock - a.isInStock);
   return (
     <div className="w-full h-min min-h-min">
       {isSideCartOpen && (
@@ -115,7 +145,7 @@ function ProductListingPage() {
         {/* <div className="w-full flex"> */}
 
         <div className={`!w-full !flex !flex-col`}>
-          <nav className=" w-1/6 !fixed top-16 bg-red-300 !h-full !min-h-full !z-10" >
+          <nav className=" w-1/6 !fixed top-16  !h-full !min-h-full !z-10" >
             <div className="overflow-auto !h-full !w-full">
               {/* <div className="!visible"> */}
               <SubCategoryNav
@@ -133,9 +163,51 @@ function ProductListingPage() {
           {/* //NOTE - main right section */}
 
           <main className=" !w-5/6 vs:!bg-red-200 flex flex-col justify-self-end !self-end">
-            <h1 className="text-2xl pt-4 px-8 mb-8 font-semibold capitalize">
-              Buy {activeSUbCategory?.name} Online
+            <div className=" pt-4 px-8 mb-8 flex items-center">
+              
+            <h1 className="text-2xl  font-semibold capitalize w-1/2 ">
+              Buy {activeSUbCategory?.name||category?.subcategories[0]?.name} Online
             </h1>
+            {/* ///  */}
+            <div className="flex  items-center gap-[1.6rem] w-1/2 justify-end">
+              <Filter filterField="discount"
+              options={
+                [
+                  {
+                    value:"all",
+                    label:"All"
+                },
+                  {
+                    value:"with-discount",
+                    label:"With discount"
+                },
+                  {
+                    value:"no-discount",
+                    label:"No discount"
+                },
+              ]
+              }
+  //             {filterValue === "discount" && filterValue !== "all" 
+  // ? "discount" 
+  // : filterValue === "in-stock" && filterValue !== "all" 
+  // ? "in-stock" 
+  // : ""}
+  />
+    <SortBy
+    
+    options={[
+      { value: "name-asc", label: "Sort by name (A-Z)" },
+      { value: "name-desc", label: "Sort by name (Z-A)" },
+      { value: "priceAfterDiscount-asc", label: "Sort by price (low first)" },
+      { value: "priceAfterDiscount-desc", label: "Sort by price (high first)" },
+    ]}
+
+    
+    />
+
+            </div>
+            {/* ///  */}
+            </div>
 
             {isLoading ? (
               <div
@@ -147,9 +219,9 @@ function ProductListingPage() {
                 </span>
               </div>
             ) : (
-              <div className="w-full grid grid-cols-5 grid-rows-1 ">
-                {products &&
-                  products.map((product) => (
+              <div className="w-full grid grid-cols-5 grid-rows-1 gap-3 px-3">
+                {sortedProducts &&
+                  sortedProducts?.map((product) => (
                     <ProductCard key={product?._id} product={product} />
                     // <Link
                     //   to={`/pn/${product?.name}/pvid/${product?._id}`
@@ -282,7 +354,7 @@ function ProductListingPage() {
             >
           </div> */}
 
-                <div>2</div>
+                {/* <div>2</div>
                 <div>3</div>
                 <div>4</div>
                 <div>5</div>
@@ -314,7 +386,7 @@ function ProductListingPage() {
                 <div>2</div>
                 <div>3</div>
                 <div>4</div>
-                <div>5</div>
+                <div>5</div> */}
               </div>
             )}
 
@@ -455,7 +527,7 @@ function ProductCard({ product }) {
       {product?.isInStock ? (
         <div
           key={product?.name}
-          className="h-64 relative flex flex-col justify-between w-full p-3 shadow-xl border"
+          className="h-64 relative flex flex-col justify-between w-full p-3 shadow-xl border rounded-md"
         >
           {(product?.discount && ((product?.discount) > 0)) ? 
             <span className=" absolute top-0 left-0 justify-self-center self-center text-[10px] flex justify-center items-center font-semibold border bg-fuchsia-500 text-white rounded-br-2xl pr-2 px-1 py-[2px]">
@@ -517,6 +589,10 @@ function ProductCard({ product }) {
                 productId={product?._id}
                 currentQuantityOfProduct={currentQuantityOfProduct}
               />
+              // <UpdateItemQuantity2
+              //   productId={product?._id}
+              //   currentQuantityOfProduct={currentQuantityOfProduct}
+              // />
             )}
             </div>
           </div>
@@ -524,7 +600,7 @@ function ProductCard({ product }) {
       ) : (
         <div
           key={product?.name}
-          className="h-64 relative flex flex-col justify-between w-full p-3 shadow-xl border "
+          className="h-64 relative flex flex-col justify-between w-full p-3 shadow-xl border rounded-md"
         >
           {(product?.discount && ((product?.discount) > 0)) ?
             <span className=" absolute top-0 left-0 justify-self-center self-center text-[10px] flex justify-center items-center font-semibold border bg-fuchsia-500 text-white rounded-br-2xl pr-2 px-1 py-[2px] z-10">

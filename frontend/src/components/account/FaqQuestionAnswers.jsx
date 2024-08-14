@@ -4,9 +4,9 @@ import BackButton from "../ui/buttons/BackButton";
 
 function FaqQuestionAnswers() {
     const { faqCategoryId,faqQuestionID } = useParams();
-    const category = Object.keys(faqData).find((key) => faqData[key].id === faqCategoryId);
+    const category = Object?.keys(faqData)?.find((key) => faqData[key]?.id === faqCategoryId);
     console.log(typeof category);
-    const questionData = faqData[category].questions.find(q => q.id === faqQuestionID);
+    const questionData = faqData[category]?.questions?.find(q => q?.id === faqQuestionID);
     console.log(questionData);
     
   return (

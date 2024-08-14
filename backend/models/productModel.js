@@ -130,3 +130,31 @@ productSchema.index({ name: 1, category: 1, tags: 1 });
 const Product = mongoose.model("Product", productSchema);
 
 module.exports = Product;
+
+
+// server.js or app.js
+// const express = require('express');
+// const mongoose = require('mongoose');
+// const Product = require('./models/productModel'); // Assuming you have a Product model
+
+// const app = express();
+
+// mongoose.connect('your_mongo_db_connection_string', { useNewUrlParser: true, useUnifiedTopology: true });
+
+// app.get('/search', async (req, res) => {
+//     const query = req.query.q;
+//     if (!query) {
+//         return res.status(400).json({ error: 'Query parameter is required' });
+//     }
+//     try {
+//         const results = await Product.find({ name: new RegExp(query, 'i') }); // Case insensitive search
+//         res.json(results);
+//     } catch (error) {
+//         res.status(500).json({ error: 'Internal Server Error' });
+//     }
+// });
+
+// const PORT = process.env.PORT || 5000;
+// app.listen(PORT, () => {
+//     console.log(`Server is running on port ${PORT}`);
+// });

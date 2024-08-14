@@ -52,8 +52,17 @@ const userSchema = new mongoose.Schema({
         type:Boolean,
         default:true,
         select:false,
-    }
-    
+    } ,
+     addresses: [{
+        label: {
+          type: String,
+          //required: true,
+        },
+        address: {
+          type: String,
+          //required: true,
+        }
+      }],
 },
 {
     toJSON: { virtuals: true },

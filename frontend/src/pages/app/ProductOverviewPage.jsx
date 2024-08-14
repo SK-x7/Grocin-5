@@ -10,7 +10,8 @@ import Header from "../../components/ui/Header";
 import HowItWorksSmallSize from "./HowItWorksSmallSize";
 ("");
 import { addItem,getCurrentQuantityById} from '../../features/cartSlice';
-import UpdateItemQuantityButton from "../../components/cart/UpdateItemQuantityButton";
+// import UpdateItemQuantityButton from "../../components/cart/UpdateItemQuantityButton";
+import UpdateItemQuantity2 from "../../components/cart/UpdateItemQuantity2";
 import { useRef } from "react";
 
 // import HowItWorks from "./HowItWorks"
@@ -205,11 +206,18 @@ function ProductOverviewPage() {
             {/* ///////////////////////////////////////////////////////////////////////////////////////////////////   */}
             
             
-            {!isINCart &&             <button onClick={(e)=>{e.preventDefault();handleAddToCart();}} className=" bg-slate-500 text-white flex justify-center items-center py-3 px-11 text-sm rounded-lg hover:bg-slate-500 hover:text-white hover:ring-2 hover:ring-slate-400 hover:ring-offset-1 hover:border hover:border-red-200">
+            {!isINCart &&             <button onClick={(e)=>{e.preventDefault();handleAddToCart();}} className=" bg-slate-500 text-white flex justify-center items-center py-2 px-11 text-sm rounded-lg hover:bg-slate-500 hover:text-white hover:ring-2 hover:ring-slate-400 hover:ring-offset-1 hover:border hover:border-red-200">
               Add
             </button>}
 
-            {isINCart && <UpdateItemQuantityButton productId={product?._id} currentQuantityOfProduct={currentQuantityOfProduct} />}
+            {/* {isINCart && <UpdateItemQuantityButton productId={product?._id} currentQuantityOfProduct={currentQuantityOfProduct} />} */}
+            {isINCart && 
+            <div className="w-24 bg-red-200 h-8">
+            <UpdateItemQuantity2 productId={product?._id} currentQuantityOfProduct={currentQuantityOfProduct} 
+            
+            />
+            </div>
+            }
           </div>
 
           <HowItWorksSmallSize />

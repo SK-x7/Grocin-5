@@ -1,14 +1,16 @@
 import { useMutation } from "@tanstack/react-query";
 import {useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
     Navigate
   } from "react-router-dom";
 import { updateOrderStatus } from "../../../apis/orderApi";
+import { clearCart } from "../../../features/cartSlice";
   import { API_URL } from "../../../utils/constants";
 import PaymentSuccesful from "./PaymentSuccesful";
 
 function Return() {
+  const dispatch = useDispatch();
     const [status, setStatus] = useState(null);
     const [orderUpdatedSuccessfully, setOrderUpdatedSuccessfully] = useState(false);
     const queryString = window.location.search;
@@ -65,6 +67,7 @@ function Return() {
     }
   
     if ((status === 'complete')&&(orderUpdatedSuccessfully)&&(isLoading===false)) {
+      dispatch(clearCart());
       return <PaymentSuccesful/>
       // return (
         

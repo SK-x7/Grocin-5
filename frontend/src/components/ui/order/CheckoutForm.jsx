@@ -7,9 +7,10 @@ import { useQuery } from "@tanstack/react-query";
 // import { useMutation} from "@tanstack/react-query";
 // import { useEffect } from "react";
 import { getCheckOutSession } from "../../../apis/orderApi";
+import { STRIPE_APIURL } from '../../../utils/constants';
 
 
-const stripePromise = loadStripe("pk_test_51PCPQ7SCYNwOSRdPc9vhilWWao77cM8GPqMMUmsj2TPitKFjkti2tziamGnuzp0xhP5oUlnoGG8SEQ1ogWxDgVDL00sC7bA33g");
+const stripePromise = loadStripe(`${STRIPE_APIURL}`);
 let obj={
   "products": [
     {

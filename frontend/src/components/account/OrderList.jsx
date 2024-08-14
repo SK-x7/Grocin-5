@@ -5,6 +5,7 @@ import { getAllOrdersByCurrentUser } from "../../apis/orderApi";
 import { useUser } from "../../hooks/useUser";
 import {formatDateOfOrders} from "../../utils/orderUtils";
 import {extractProductNames} from "../../utils/orderUtils";
+import NoOrderYetPage from "../ui/NoOrderYetPage";
 // import { getAllOrdersByCurrentUser } from "../../apis/orderApi";
 // import { useGetFetchQuery } from "../../hooks/useGetQueryData";
 
@@ -26,7 +27,14 @@ function OrderList() {
         console.log(orders);
     if(isLoading)   return <div>..............</div>
     
+    if(!orders?.length) return <NoOrderYetPage/>
+    
     return (
+      <>
+              {/* <div className="flex justify-start items-center px-0 pb-6 text-xl">
+            <h3 className="font-semibold">My order history</h3>
+            <button className="text-sm py-3 px-7 border rounded-lg bg-blue-600 text-white  tracking-wider">Add New Address</button>
+        </div> */}
     <ul className=" w-full">
         {
             orders.map((order)=>(
@@ -52,12 +60,19 @@ function OrderList() {
         }
         {order?.orderStatus==="successful" && <span className="py-1 px-2 text-white rounded-md bg-green-500 font-medium capitalize">{order?.orderStatus}</span>
         }
+        
+        {order?.orderStatus === "idle" && (
+            <span className="py-1 px-2 text-black rounded-md bg-amber-300 font-medium capitalize">
+              Payment pending
+            </span>
+          )}
                 </div>
               </NavLink>
             ))
-        }
+          }
 
     </ul>
+          </>
   );
 }
 

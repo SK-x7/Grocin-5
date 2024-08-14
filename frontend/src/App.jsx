@@ -2,6 +2,8 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './AuthContext'
+import { UiProvider } from './contexts/UiContext'
+import { ModalProvider } from './contexts/ModalContext'
 import { Toaster } from 'react-hot-toast'
 import Home from './Home'
 import ProductOverviewPage from './pages/app/ProductOverviewPage'
@@ -17,6 +19,7 @@ import ProductListingPage from './pages/app/ProductListingPage'
 import AppLayout from './pages/Layout/AppLayout'
 import CheckoutForm from './components/ui/order/CheckoutForm'
 import Return from './components/ui/order/Return'
+import NoOrderYetPage from './components/ui/NoOrderYetPage'
 import PaymentSuccesful from './components/ui/order/PaymentSuccesful'
 import OrderArrived from './components/ui/order/OrderArrived'
 import PaymentPage from './components/ui/order/PaymentPage'
@@ -30,6 +33,11 @@ import OrderList from './components/account/OrderList'
 import FaqsQuestions from './components/account/FaqsQuestions'
 import FaqQuestionAnswers from './components/account/FaqQuestionAnswers'
 import OrderOverview from './components/account/OrderOverview'
+import SearchPage from './pages/app/SearchPage'
+import Modal from './components/ui/Modal'
+import SelectAddressFromOptions from './components/address/SelectAddressFromOptions';
+import AddAddress from './components/address/AddAddress'
+import TestModals from './TestModals'
 // import { Elements } from "@stripe/react-stripe-js";
 // import { loadStripe } from '@stripe/stripe-js'
 // const stripePromise = loadStripe("pk_test_51PCPQ7SCYNwOSRdPc9vhilWWao77cM8GPqMMUmsj2TPitKFjkti2tziamGnuzp0xhP5oUlnoGG8SEQ1ogWxDgVDL00sC7bA33g");
@@ -50,6 +58,11 @@ function App() {
       <Toaster />
         <Router>
       <AuthProvider>
+      <ModalProvider>
+      <UiProvider>
+        
+     
+    
           <Routes>
           {/* <Route path="/checkout" element={
             <Elements stripe={stripePromise}>
@@ -59,17 +72,27 @@ function App() {
           } /> */}
           
           
-          <Route path="/m" element={<PageNotFound/>} />
+          {/* <Route path="*" element={<PageNotFound/>} />
+          <Route path="s" element={<SearchPage/>} />
+          <Route path="search" element={<SearchPage/>} />
+          <Route path="x" element={<NoOrderYetPage/>} />
+          <Route path="noorderfound" element={<NoOrderYetPage/>} />
           <Route path="/checkout" element={<PaymentPage/>} />
           <Route path="/stripe-checkout" element={<CheckoutForm />} />
           <Route path="/p" element={<PaymentSuccesful />} />
           <Route path="/o" element={<OrderArrived/>} />
           <Route path="/order/status/arrived" element={<OrderArrived/>} />
           {/* <Route path="/order" element={<OrderArrived/>} /> */}
-          <Route path="/return" element={<Return />} />
+          {/* <Route path="/return" element={<Return />} /> */}
           {/* <Route path="/return/:sessionId" element={<Return />} /> */}
-            <Route path="/test" element={<Test />} />
+            {/* <Route path="/test" element={<Test />} /> */} 
+            {/* */}
             <Route path="" element={<AppLayout />} >
+            <Route path="/modal" element={<Modal />} />
+            <Route path="/testModal" element={<TestModals />} />
+            <Route path="/saf" element={<SelectAddressFromOptions/>} />
+            <Route path="/address" element={<AddAddress/>} />
+            <Route path="/map" element={<AddAddress/>} />
               
               <Route path='/account' element={<ProfilePage/>}>
                 <Route path='' index element={<Navigate to="/account/orders" />}/>
@@ -84,7 +107,20 @@ function App() {
                </Route>
               
               
-              
+               <Route path="*" element={<PageNotFound/>} />
+          <Route path="s" element={<SearchPage/>} />
+          <Route path="search" element={<SearchPage/>} />
+          <Route path="x" element={<NoOrderYetPage/>} />
+          <Route path="noorderfound" element={<NoOrderYetPage/>} />
+          <Route path="/checkout" element={<PaymentPage/>} />
+          <Route path="/stripe-checkout" element={<CheckoutForm />} />
+          <Route path="/p" element={<PaymentSuccesful />} />
+          <Route path="/o" element={<OrderArrived/>} />
+          <Route path="/order/status/arrived" element={<OrderArrived/>} />
+          {/* <Route path="/order" element={<OrderArrived/>} /> */}
+          <Route path="/return" element={<Return />} />
+          {/* <Route path="/return/:sessionId" element={<Return />} /> */}
+            <Route path="/test" element={<Test />} />
               
               
               
@@ -93,6 +129,7 @@ function App() {
               
               
             <Route path="/home" element={<Home />} />
+            <Route path="/" element={<Home />} />
             <Route path="/profile" element={<ProfilePage/>} />
             <Route path="cn/:categoryName/:subcategoryName/cid/:categoryId/scid/:subcategoryId" element={<ProductListingPage/>}></Route>
             <Route path="pn/:productName/pvid/:productId" element={<ProductOverviewPage/>}></Route>
@@ -113,6 +150,8 @@ function App() {
               <Route path="reset-password/:token" element={<ResetPassword />} />
             </Route>
           </Routes>
+          </UiProvider>
+          </ModalProvider>
       </AuthProvider>
         </Router>
     </QueryClientProvider>

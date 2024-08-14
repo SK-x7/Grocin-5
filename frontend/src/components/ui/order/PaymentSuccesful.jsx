@@ -18,12 +18,15 @@ function PaymentSuccesful() {
                         <img src="src/images/done.png" alt="payment-icon" className="h-20 w-20 object-cover p-[8px]"/>
                     </div>
                     <div className="flex flex-col justify-start items-center">
-                    <h1 className="text-4xl mb-[10px]">₹1,18,355</h1>
+                    {/* <h1 className="text-4xl mb-[10px]">₹1,18,355</h1> */}
         <h2 className="text-2xl mb-[20px]">Payment Successful!</h2>
+        {/* <p className="text-base mb-[10px]">The payment has been done successfully.</p> */}
         <p className="text-base mb-[10px]">The payment has been done successfully.</p>
-        <p className="text-base mb-[10px]">Thanks for being there with us.</p>
-        <p className="mb-5">Payment ID: 283848, 24 Oct,2020-11:55 PM</p>
-        <NavLink to="/order/status/arrived" className="rounded-xl border py-[10px] px-5 !text-base bg-blue-200">DONE</NavLink>
+        {/* <p className="mb-5">Payment ID: 283848, 24 Oct,2020-11:55 PM</p> */}
+        <p className="text-base mb-[10px]">Thanks for being there with us.</p>  
+        <p className="mb-5 text-sm">Your order has arrived and should be delivered shortly.</p>
+        {/* <NavLink to="/order/status/arrived" className="rounded-xl border py-[10px] px-5 !text-base bg-blue-200">DONE</NavLink> */}
+        <NavLink to="/account/orders" className="rounded-xl border py-[10px] px-5 !text-base bg-blue-200">View Order Details</NavLink>
 
                     </div>
                 </div>

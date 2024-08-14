@@ -26,9 +26,9 @@ function PaymentPage() {
         let mutateObj=[
             currentOrderId,
             {
-            paymentStatus:"successful",
+            paymentStatus:"pending",
             paymentMode:"pod",
-            orderStatus:"successful"
+            orderStatus:"arrived"
           },
         ]
           mutate(mutateObj)

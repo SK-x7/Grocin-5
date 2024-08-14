@@ -3,7 +3,7 @@
 import { useDispatch } from 'react-redux';
 import { decreaseItemQuantity, increaseItemQuantity } from '././../../features/cartSlice';
 
-function UpdateItemQuantityButton({ productId, currentQuantityOfProduct }) {
+function UpdateItemQuantityButton2({ productId, currentQuantityOfProduct }) {
   console.log(productId,'❌');
   const dispatch = useDispatch();
 
@@ -17,7 +17,7 @@ function UpdateItemQuantityButton({ productId, currentQuantityOfProduct }) {
         -
       </button>
         
-      <span onClick={(e)=>e.preventDefault()} className=" font-medium !h-full flex justify-center items-center">{currentQuantityOfProduct||0}</span>
+      <span disabled onClick={(e)=>e.preventDefault()}  className=" font-medium !h-full flex justify-center items-center">{currentQuantityOfProduct||0}</span>
       <button
       className='!h-full flex justify-center items-center'
         type="round"
@@ -30,4 +30,4 @@ function UpdateItemQuantityButton({ productId, currentQuantityOfProduct }) {
   );
 }
 
-export default UpdateItemQuantityButton;
+export default UpdateItemQuantityButton2;

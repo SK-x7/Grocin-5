@@ -28,5 +28,6 @@ router
   );
 
 router.route("/uploadProductImage").patch(imageUploadHandler.uploadImages)
+router.route("/searchProduct/search").get(productController.searchProduct);
   
 module.exports = router;

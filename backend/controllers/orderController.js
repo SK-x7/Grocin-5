@@ -58,12 +58,12 @@ exports.getAllOrders=catchAsync(async(req,res,next)=>{
 exports.createOrder=catchAsync(async(req,res,next)=>{
     console.log(req.body)
     const obj={
-        user: req.user.id,
-        products: req.body.products,
-        deliveryFee:req.body.deliveryFee,
-        handlingCharge:req.body.handlingCharge,
-        tipForDeliveryPartner:req.body.tipForDeliveryPartner,
-        totalPrice:req.body.totalPrice,
+        user: req?.user?.id,
+        products: req?.body?.products,
+        deliveryFee:req?.body?.deliveryFee,
+        handlingCharge:req?.body?.handlingCharge,
+        tipForDeliveryPartner:req?.body?.tipForDeliveryPartner,
+        totalPrice:req?.body?.totalPrice,
         
     }
     console.log(obj);

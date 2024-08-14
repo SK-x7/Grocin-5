@@ -1,6 +1,6 @@
 function Footer() {
     return (
-        <footer className=" w-full h-64 min-h-16   grid grid-cols-4 grid-rows-1 justify-evenly items-center box-border">
+        <footer className=" w-full h-64 min-h-16   grid grid-cols-4 grid-rows-1 justify-evenly items-center box-border py-3">
             {/* 1 */}
             <div className=" h-full grid  
              grid-cols-1 grid-rows-2">

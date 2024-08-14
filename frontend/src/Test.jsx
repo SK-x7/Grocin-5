@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useSelector,useDispatch } from "react-redux";
 import EmptySideCart from "./components/ui/cart/EmptySideCart";
-import { setIsSideCartOpen } from "./features/cartSlice";
-import { setCurrentOrderId } from "./features/orderSlice";
+import { clearCart, setIsSideCartOpen } from "./features/cartSlice";
+import { clearIdOfReOrders, setCurrentOrderId } from "./features/orderSlice";
 import UpdateItemQuantityButton from "./components/cart/UpdateItemQuantityButton"
 import { useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
@@ -113,7 +113,10 @@ function Test() {
           toast.success("HeHe",{
             duration:1000,
           })
+        dispatch(clearCart());
+        dispatch(clearIdOfReOrders());
         navigate("/checkout");
+        
         // queryClient.invalidateQueries("user");
         
         }
@@ -443,7 +446,7 @@ X
   </div>
   {/* tip div  */}
   {/* cancellation policy div     */}
-  <div className="w-full bg-white rounded flex flex-col p-3 gap-1">
+  <div className="w-full bg-white rounded flex flex-col p-3 gap-1 mb-2">
     <h1 className="text-[15px] font-semibold">Cancellation Policy</h1>
     <p className="text-xs">Orders cannot be cancelled once packed for delivery. In case of unexpected delays, a refund will be provided, if applicable.</p>
   </div>
@@ -453,7 +456,7 @@ X
     {/* try div  */}
     {cart.length!==0&&
     
-    <div className="w-full bg-white flex flex-col fixed bottom-0 z-20">
+    <div className="w-full bg-white flex flex-col fixed bottom-0 z-20 ">
       <div className="!w-full py-3 px-6 flex justify-between border-b">
         <div className="w-full flex">
         <div className="flex justify-center items-center mr-3">
@@ -464,18 +467,23 @@ X
 
         </div>
         <div className="flex flex-col">
-          <span className="text-[13px]">Delivering to Home</span>
-          <span className="text-[11px]">fjbfj, ryur Kolkata West Bengal, India</span>
+          <span className="text-[13px] font-bold ">Delivering to </span>
+          {/* <span className="text-[11px]">fjbfj, ryur Kolkata West Bengal, India</span> */}
+          {localStorage.getItem('deliveryAddress')?<span className="text-[11px] line-clamp-2">{localStorage.getItem('deliveryAddress')}</span>:
+          <span className="text-[11px] line-clamp-2">No delivery location selected</span>  
+        
+        }
+          
         </div>
         </div>
         <div className="flex justify-center items-center text-green-800 font-semibold" >
-          <span className="text-xs">Change</span>
+          <span className="text-xs bg-green-50">Change</span>
         </div>
       </div>
       <div className="w-full pt-3 px-4 pb-6">
         <div className="bg-green-700 flex py-[10px] px-3 justify-between items-center rounded-lg">
           <div className="flex flex-col">
-            <span className="text-[15px] text-white">₹ {(!isNaN(tipForDeliveryPartner)&&Number(tipForDeliveryPartner))+2+cartGrandTotalAfterDiscount+(
+            <span className="text-[15px] text-white">₹ {(!isNaN(tipForDeliveryPartner)&&Number(tipForDeliveryPartner))+2+Number(cartGrandTotalAfterDiscount)+(
       (cartGrandTotalAfterDiscount>99?0:25)
     )}</span>
             <span className="text-[11px] text-white">Total</span>
@@ -483,6 +491,8 @@ X
           <div className="flex justify-center items-center gap-[1px]">
             <button className="text-white" disabled={isLoading} onClick={(e)=>{
               e.preventDefault();
+              if(!localStorage.getItem('deliveryAddress'))  toast.error("Please select a delivery address first")
+              else
               prepareOrder();
             }}>Proceed To Pay</button>
             <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" strokeWidth={0} stroke="white" className="w-4 h-4">

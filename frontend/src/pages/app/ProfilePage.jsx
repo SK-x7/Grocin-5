@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
+import { logoutUser } from "../../apis/userApi";
 import Header from "../../components/ui/Header";
 
 
@@ -210,7 +211,12 @@ function ProfilePage() {
               </NavLink> */}
             </ul>
             <hr className="bg-black h-[2px]"></hr>
-            <NavLink className="mx-auto mt-4">Log Out</NavLink>
+            <button onClick={
+              (e)=>{
+                e.preventDefault();
+                logoutUser();
+              }
+            } className="mx-auto mt-4">Log Out</button>
           </div>
 
           <div className=" !h-full w-4/6 overflow-y-scroll">
