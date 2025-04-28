@@ -2,4 +2,7 @@ frontend/node_modules
 /frontend/src/utils/constants.js
 backend/node_modules
 /backend/config.env
+backend/config.env
 *.env
+/backend/*.env
+backend/*.env
