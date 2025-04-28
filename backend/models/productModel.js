@@ -40,6 +40,10 @@ const productSchema = new mongoose.Schema(
       type: Number,
       select: false,
     },
+    availableStock: {
+      type: Number,
+      select: false,
+    },
     isInStock: {
       type: Boolean,
       default: true,

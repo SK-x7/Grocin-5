@@ -162,7 +162,7 @@ exports.addRemoveSubcategory = catchAsync(async (req,res,next)=>{
       const updatedCategory=await Category.findByIdAndUpdate(req.params.id,
         { $addToSet: { subcategories: { $each: req.body.data } } },
         {new:true,runValidators:true}
-      )  
+      )   
       console.log(updatedCategory)
       
       res.status(200).json({

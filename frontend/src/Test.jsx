@@ -1,17 +1,25 @@
 import { useEffect, useState } from "react";
 import { useSelector,useDispatch } from "react-redux";
 import EmptySideCart from "./components/ui/cart/EmptySideCart";
-import { clearCart, setIsSideCartOpen } from "./features/cartSlice";
-import { clearIdOfReOrders, setCurrentOrderId } from "./features/orderSlice";
+import {  setIsSideCartOpen } from "./features/cartSlice";
+import { setCurrentOrderId } from "./features/orderSlice";
+//REVIEW - 
+// import { setIsSideCartOpen } from "./features/cartSlice";
+// import { clearIdOfReOrders, setCurrentOrderId } from "./features/orderSlice";
 import UpdateItemQuantityButton from "./components/cart/UpdateItemQuantityButton"
 import { useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { createOrder } from "./apis/orderApi";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { useUiContext } from "./contexts/UiContext";
+import SelectAddressFromOptions from "./components/address/SelectAddressFromOptions";
+import Modal from "./components/ui/Modal";
 
 function Test() {
   const dispatch=useDispatch();
+  const {setIsModalOpen,isModalOpen}=useUiContext();
+
   const [scrollheight,setScrollHeight] = useState();
   const [customTipForDeliveryPartner,setCustomTipForDeliveryPartner] = useState(undefined);
   const [validTipAmount,setValidTipAmount] = useState(null);
@@ -113,9 +121,11 @@ function Test() {
           toast.success("HeHe",{
             duration:1000,
           })
-        dispatch(clearCart());
-        dispatch(clearIdOfReOrders());
-        navigate("/checkout");
+          //REVIEW - 
+        // dispatch(clearCart());
+        // dispatch(clearIdOfReOrders());
+        toggleSidebar();
+        navigate(`/checkout/${data.data.newOrder.id}`);
         
         // queryClient.invalidateQueries("user");
         
@@ -477,7 +487,14 @@ X
         </div>
         </div>
         <div className="flex justify-center items-center text-green-800 font-semibold" >
-          <span className="text-xs bg-green-50">Change</span>
+          <span className="text-xs bg-green-50 cursor-pointer" onClick={(e)=>{
+            e.preventDefault();
+            setIsModalOpen(true);
+          }}>Change</span>
+          { 
+            isModalOpen&&<Modal><SelectAddressFromOptions/></Modal>
+            }
+
         </div>
       </div>
       <div className="w-full pt-3 px-4 pb-6">
@@ -503,6 +520,7 @@ X
         </div>
       </div>
     </div>
+    
     }
     {/* try div  */}
         </div>

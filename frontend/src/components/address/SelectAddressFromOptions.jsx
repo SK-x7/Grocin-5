@@ -1,7 +1,6 @@
 // import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
-import { Link } from "react-router-dom";
 import { getUserSavedAddresses } from "../../apis/userApi";
 import { useUiContext } from "../../contexts/UiContext";
 import { useUser } from "../../hooks/useUser";
@@ -9,8 +8,9 @@ import { useUser } from "../../hooks/useUser";
 /* eslint-disable react/prop-types */
 
 function SelectAddressFromOptions() {
-  const { setIsModalOpen, closeModal } = useUiContext();
-  console.log(closeModal);
+  const { setIsModalOpen } = useUiContext();
+  // console.log("📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈📈");
+  // const { setIsModalOpen, closeModal } = useUiContext();
   // console.log(onClose);
   // console.log(oo);
   // const  [lat,setLat]=useState("");
@@ -56,7 +56,6 @@ function SelectAddressFromOptions() {
       })
       .then((data) => {
         let adr = data.addresses[0].address.freeformAddress;
-        closeModal?.();
         localStorage.setItem("deliveryAddress", adr);
         //   toast.success(adr);
         toast.custom((t) => (
@@ -118,17 +117,6 @@ function SelectAddressFromOptions() {
         Your Location
       </span>
       <div className="flex flex-col justify-start items-start w-full px-6 gap-5 mt-6">
-        <div className="flex justify-center items-center gap-3 ml-1">
-          <img
-            src="https://cdn.zeptonow.com/web-static-assets-prod/artifacts/11.8.3/tr:w-0.2,ar-0.2-0.2,pr-true,f-auto,q-80//images/google-map/location-marker-colored-icon.svg"
-            alt="address_img"
-          />
-          <div className="flex flex-col justify-start items-start text-blue-700">
-            <Link to="/map" className="font-semibold">
-              Select a new address from map 📌
-            </Link>
-          </div>
-        </div>
 
         <div className="flex justify-center items-center gap-3">
           <img
@@ -139,11 +127,14 @@ function SelectAddressFromOptions() {
             className="flex flex-col justify-start items-start gap-0 text-red-500 cursor-pointer"
             onClick={(e) => {
               e.preventDefault();
-              () => setIsModalOpen(false);
+              // () => setIsModalOpen(false);
+              
               handleLocation();
+              setIsModalOpen(false);
+              // onClose();
             }}
           >
-            <span className="font-medium ">Select current location</span>
+            <span className="font-medium">Select current location</span>
             <span>using gps</span>
           </div>
         </div>
@@ -156,6 +147,19 @@ function SelectAddressFromOptions() {
 }
 
 function ShowSavedAddresses() {
+  
+  const {setIsModalOpen}=useUiContext();
+  //
+  function handleClickOnSavedAddress(address) {
+    localStorage.setItem("deliveryAddress", address);
+    setIsModalOpen(false);
+
+
+    
+  }
+  
+  
+  
     const {currentUserId}= useUser();
     
     const {data,isLoading}= useQuery(
@@ -182,14 +186,17 @@ function ShowSavedAddresses() {
           <div className="flex flex-col justify-start items-start  w-full divide-y-2 gap-5 h-40  overflow-y-scroll overflow-x-clip" >
       {
                 savedAddressesByUser?.map((adr,i)=>(
-            <div className="flex justify-start items-center gap-3 w-full pt-3" key={i}>
+            <div className="flex justify-start items-center gap-3 w-full pt-3 cursor-pointer" key={i} onClick={(e)=>{
+              e.preventDefault();
+              handleClickOnSavedAddress(adr?.address);
+            }}>
               <img
                 src="https://cdn.zeptonow.com/web-static-assets-prod/artifacts/11.8.3/tr:w-0.2,ar-0.2-0.2,pr-true,f-auto,q-80//images/google-map/location-marker-colored-icon.svg"
                 alt="gps"
               />
               <div className="flex flex-col justify-start items-start gap-0 ">
                 <span className="font-medium capitalize">{adr?.label}</span>
-                <span className="line-clamp-2 text-wrap">{adr?.address}</span>
+                <span className="line-clamp-2 text-wrap" >{adr?.address}</span>
               </div>
             </div>
         ))

@@ -19,7 +19,7 @@ const updateArrivedOrders = async () => {
 };
 
 // Schedule the cron job to run every minute
-cron.schedule('* * * * *', () => {
-  console.log('Running check for pending and arrived orders...');
-  updateArrivedOrders().catch(err => console.error(err));
-});
+// cron.schedule('* * * * *', () => {
+//   console.log('Running check for pending and arrived orders...');
+//   updateArrivedOrders().catch(err => console.error(err));
+// });

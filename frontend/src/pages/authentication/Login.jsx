@@ -77,7 +77,7 @@ const res=axios.post(`${API_URL}/api/v1/users/login`,{
   // }
 
   return (
-    <div className="min-h-screen h-screen w-screen bg-indigo-200 flex flex-grow-0 flex-wrap place-content-center box-border overflow-hidden">
+    <div className="min-h-screen h-screen w-full bg-indigo-200 flex flex-grow-0 flex-wrap place-content-center box-border overflow-hidden">
       <div className="bg-white h-4/5 w-10/12 flex flex-col flex-shrink-0 flex-wrap ">
         <div className="w-2/5 h-full bg-white">
           <img

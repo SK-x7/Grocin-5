@@ -1,17 +1,18 @@
-//LTT - check lecture 134
-//LTT - course section 8
+//TODO - remove the review
 //TODO - block reset password page
 
-
+//REVIEW -
 
 const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
-const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const Email = require("../utils/email");
 const crypto = require("crypto");
 const { totp } = require("otplib");
+const { type } = require("os");
+const cookieParser = require("cookie-parser");
+const DispatchManager=require("../models/dispatchManagerModel");
 
 
 
@@ -22,8 +23,8 @@ const signToken = (id) => {
   });
 };
 
-const createSendToken = (user, statusCode, res) => {
-  const token = signToken(user._id);
+const createSendToken = (dispatchManager, statusCode, res) => {
+  const token = signToken(dispatchManager._id);
   const date_now = new Date();
   date_now.setDate(date_now.getDate() + process.env.JWT_COOKIE_EXPIRES_IN);
   res.cookie("jwt", token, {
@@ -35,18 +36,18 @@ const createSendToken = (user, statusCode, res) => {
     domain:"",
   }); 
 
-  user.password = undefined;
+  dispatchManager.password = undefined;
   res.status(statusCode).json({
     status: "success",
     token,
     data: {
-      user,
+      dispatchManager,
     },
   });
 };
 
 exports.signUp = catchAsync(async (req, res, next) => {
-  const newUser = await User.create({
+  const newUser = await DispatchManager.create({
     name: req.body.name,
     email: req.body.email,
     password: req.body.password,
@@ -64,9 +65,9 @@ exports.login = catchAsync(async (req, res, next) => {
   }
   // console.log("1️⃣");
 
-  const user = await User.findOne({ email }).select("+password");
-  // console.log(user);
-  if (!user) {
+  const dispatchManager = await DispatchManager.findOne({ email }).select("+password");
+  // console.log(dispatchManager);
+  if (!dispatchManager) {
     return next(new AppError("Incorret email or password", 401));
   }
   
@@ -77,16 +78,16 @@ exports.login = catchAsync(async (req, res, next) => {
   //   })
   // }
   
-  const correct =await user.correctPassword(password, user.password);
+  const correct =await dispatchManager.correctPassword(password, dispatchManager.password);
   console.log(correct,"⚠️⚠️");
-  if (!user || !correct) {
+  if (!dispatchManager || !correct) {
     return next(new AppError("Incorret email or password", 401));
   }
 
   const url =
     "https://static.langimg.com/photo/imgsize-142503,msid-87446458/navbharat-times.jpg"; //NOTE - update later←
-  // await new Email(user, url).sendWelcome();
-  createSendToken(user, 201, res);
+  // await new Email(dispatchManager, url).sendWelcome();
+  createSendToken(dispatchManager, 201, res);
 });    
 // 
 exports.protect = catchAsync(async function (req, res, next) {
@@ -115,26 +116,26 @@ exports.protect = catchAsync(async function (req, res, next) {
 
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
-  //check if user still exists
+  //check if dispatchManager still exists
 
-  const currentUser = await User.findById(decoded.id);
+  const currentUser = await DispatchManager.findById(decoded.id);
   if (!currentUser) {
     return next(
       new AppError(
-        "The user belonging to  this token does no longer exist",
+        "The dispatchManager belonging to  this token does no longer exist",
         401
       )
     );
   }
 
-  //check if user changed password after token was issued
+  //check if dispatchManager changed password after token was issued
   if (currentUser.changesPasswordAfter(decoded.iat)) {
     return next(
-      new AppError("User recently changed password! Please log in again.", 401)
+      new AppError("DispatchManager recently changed password! Please log in again.", 401)
     );
   }
-  // console.log(currentUser);
-  req.user = currentUser;
+  // console.log("passed",currentUser);
+  req.dispatchManager = currentUser;
 
   next();
 });
@@ -155,14 +156,14 @@ exports.sendOtpEmail = catchAsync(async (req, res, next) => {
     };
     const token = totp.generate(process.env.OTP_SECRET);
     // console.log(typeof token);
-    let user = {};
-    user.email = req.body.email;
-    user.name = req.body.userName;
+    let dispatchManager = {};
+    dispatchManager.email = req.body.email;
+    dispatchManager.name = req.body.userName;
     let url = "https://www.npmjs.com/package/otplib";
     // console.log(token);
-    user.otp=token;
+    dispatchManager.otp=token;
 
-    await new Email(user, url).sendOtp();
+    await new Email(dispatchManager, url).sendOtp();
     res.status(200).json({
       status: "success",
       message: "One-time password sent to email,check your email",
@@ -254,20 +255,20 @@ exports.verifyOtp = catchAsync(async (req, res, next) => {
 // });
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
-  // get user password based on posted email
-  const user = await User.findOne({ email: req.body.email });
-  if (!user) {
-    return next(new AppError("there is no user with this email address"), 401);
+  // get dispatchManager password based on posted email
+  const dispatchManager = await DispatchManager.findOne({ email: req.body.email });
+  if (!dispatchManager) {
+    return next(new AppError("there is no dispatchManager with this email address"), 401);
   }
   //generat random reset token
-  const resetToken = user.createPasswordResetToken();
-  await user.save({ validateBeforeSave: false });
+  const resetToken = dispatchManager.createPasswordResetToken();
+  await dispatchManager.save({ validateBeforeSave: false });
 
-  //send it to user gmail
+  //send it to dispatchManager gmail
 
   try {
     // await sendEmail({
-    //     email:user.email,
+    //     email:dispatchManager.email,
     //     subject:'Your password reset token (valid for 10 min)',
     //     message
     // })
@@ -286,16 +287,16 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
       )}/api/v1/users/reset-password/${resetToken}`;
     }
     
-    await new Email(user, resetURL).sendPasswordReset();
+    await new Email(dispatchManager, resetURL).sendPasswordReset();
 
     res.status(200).json({
       statusbar: "success",
       message: "Token sent to email",
     });
   } catch (err) {
-    user.passwordResetToken = undefined;
-    user.passwordResetExpires = undefined;
-    await user.save({ validateBeforeSave: false });
+    dispatchManager.passwordResetToken = undefined;
+    dispatchManager.passwordResetExpires = undefined;
+    await dispatchManager.save({ validateBeforeSave: false });
 
     return next(
       new AppError("there was an error sending email,try again later", 500)
@@ -304,39 +305,39 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 });
 
 exports.resetPassword = catchAsync(async (req, res, next) => {
-  //get user based on token
+  //get dispatchManager based on token
   const hashedToken = crypto
     .createHash("sha256")
     .update(req.params.token)
     .digest("hex");
 
-  const user = await User.findOne({
+  const dispatchManager = await DispatchManager.findOne({
     passwordResetToken: hashedToken,
     passwordResetExpires: { $gt: Date.now() },
   });
 
-  //if token has not expired .and there is user ,set the password
+  //if token has not expired .and there is dispatchManager ,set the password
 
-  if (!user) {
+  if (!dispatchManager) {
     return next(new AppError("token is invalid or has expired", 400));
   }
 
-  user.password = req.body.password;
-  user.passwordConfirm = req.body.passwordConfirm;
-  user.passwordResetToken = undefined;
-  user.passwordResetExpires = undefined;
-  // user.saveAfterResetPassword();
-  await user.save();
-  //update changepasswordat property for user
+  dispatchManager.password = req.body.password;
+  dispatchManager.passwordConfirm = req.body.passwordConfirm;
+  dispatchManager.passwordResetToken = undefined;
+  dispatchManager.passwordResetExpires = undefined;
+  // dispatchManager.saveAfterResetPassword();
+  await dispatchManager.save();
+  //update changepasswordat property for dispatchManager
   res.status(200).json({
     status: 'success',
     message: 'Password reset successful, please login again'
   })
-  //log the user in send jwt
-  // createSendToken(user, 201, res);
+  //log the dispatchManager in send jwt
+  // createSendToken(dispatchManager, 201, res);
 });
 exports.updatePassword = catchAsync(async (req, res, next) => {
-  // get user from collection
+  // get dispatchManager from collection
   console.log(req.body)
   if(!req.body.passwordCurrent){
     return next(new AppError("please provide current password", 404));
@@ -348,22 +349,22 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
     return next(new AppError("please provide confirm password", 404));
   }
   
-  const user = await User.findById(req.user.id).select("+password");
-  // console.log(await user.correctPassword(req.body.passwordCurrent, user.password));
+  const dispatchManager = await DispatchManager.findById(req.dispatchManager.id).select("+password");
+  // console.log(await dispatchManager.correctPassword(req.body.passwordCurrent, dispatchManager.password));
   // check if posted current password is
-    console.log(user);
-    const correct =await user.correctPassword(req.body.passwordCurrent, user.password);
+    console.log(dispatchManager);
+    const correct =await dispatchManager.correctPassword(req.body.passwordCurrent, dispatchManager.password);
   
   
   if (!correct) {
     return next(new AppError("your current password is wrong", 401));
   }
   
-  user.password = req.body.password;
-  user.passwordConfirm = req.body.passwordConfirm;
-  await user.save();
-  createSendToken(user,200,res);
-  // log user in send jwt
+  dispatchManager.password = req.body.password;
+  dispatchManager.passwordConfirm = req.body.passwordConfirm;
+  await dispatchManager.save();
+  createSendToken(dispatchManager,200,res);
+  // log dispatchManager in send jwt
 });
 
 //NOTE - related to otp generation,validity and verification

@@ -5,7 +5,7 @@ export function useUser() {
         queryKey:["isUserLoggedIn"],
         queryFn:isUserLoggedIn,
     })
-    console.log(data);
+    // console.log(data);
     // console.log(data.data);
     // const value=data.data;
 // FIXME - query invalidate    

@@ -1,9 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { getUserSavedAddresses } from "../../apis/userApi";
+import { useUiContext } from "../../contexts/UiContext";
+import { setIsSideCartOpen } from "../../features/cartSlice";
 import { useUser } from "../../hooks/useUser";
+import EditSavedAddressPopup from "../ModalAndPopups/Modal_Popups/EditSavedAddressPopup";
+import RegularModal from "../ui/RegularModal";
 
 function MyAddresses() {
-    
+    const {setIsRegularModalOpen,isRegularModalOpen}=useUiContext();
+    const {setEditAddressLabelValue,setEditAddressValue,setEditAddressId,handleSubmitdeleteAddress}=useUiContext();
+    const navigate=useNavigate();
+    const dispatch = useDispatch();
+    const isSideCartOpen=useSelector((state)=>state.cart.isSideCartOpen);
     const {currentUserId}= useUser();
     
     const {data,isLoading}= useQuery(
@@ -26,9 +36,18 @@ function MyAddresses() {
     
     return (
         <main className="w-full divide-y-2">
+                            {isRegularModalOpen&& <RegularModal onClose={()=>setIsRegularModalOpen(false)}>
+     <EditSavedAddressPopup/>
+  </RegularModal>}
         <div className="flex justify-between items-center px-12 pb-6">
             <h3 className="font-semibold">All Saved Addresses</h3>
-            <button className="text-sm py-3 px-7 border rounded-lg bg-blue-600 text-white  tracking-wider">Add New Address</button>
+            <button className="text-sm py-3 px-7 border rounded-lg bg-blue-600 text-white  tracking-wider" onClick={(e)=>{
+                e.preventDefault();
+                if(isSideCartOpen===true){
+                    dispatch(setIsSideCartOpen())
+                }
+                navigate("/map");
+            }}>Add New Address</button>
         </div>
         <ul className="w-full flex  flex-col justify-center items-center">
             {
@@ -45,9 +64,36 @@ function MyAddresses() {
                     </div>
     
                 </div>
-                <div className="flex ml-5 justify-center items-center gap-5 h-full  !justify-self-end">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24 " className="w-5 h-5"><path d="M1.439 16.873l-1.439 7.127 7.128-1.437 16.873-16.872-5.69-5.69-16.872 16.872zm4.702 3.848l-3.582.724.721-3.584 2.861 2.86zm15.031-15.032l-13.617 13.618-2.86-2.861 10.825-10.826 2.846 2.846 1.414-1.414-2.846-2.846 1.377-1.377 2.861 2.86z"/></svg>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5">
+                <div className="flex ml-5 justify-center items-center gap-5 h-full  !justify-self-end ">
+                {/* {isRegularModalOpen&& <RegularModal onClose={()=>setIsRegularModalOpen(false)}>
+     <EditSavedAddressPopup/>
+  </RegularModal>} */}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24 " className="w-5 h-5"
+                                        onClick={(e)=>{
+                                            setEditAddressLabelValue(adr?.label)
+                                            setEditAddressValue(adr?.address)
+                                            setEditAddressId(adr?.id)
+                                            alert(adr?.id)
+                                            e.preventDefault();
+                                            setIsRegularModalOpen(true);
+                                            
+                                            
+                                        }}
+                    
+                    ><path d="M1.439 16.873l-1.439 7.127 7.128-1.437 16.873-16.872-5.69-5.69-16.872 16.872zm4.702 3.848l-3.582.724.721-3.584 2.861 2.86zm15.031-15.032l-13.617 13.618-2.86-2.861 10.825-10.826 2.846 2.846 1.414-1.414-2.846-2.846 1.377-1.377 2.861 2.86z"
+
+                    /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5"
+                onClick={(e)=>{
+                                                                
+                                                                
+                                                                alert(adr?.id)
+                                                                e.preventDefault();
+                                                                handleSubmitdeleteAddress(adr?.id);
+                                                                
+                                                                
+                                                                
+                                                            }}>
     <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
     </svg>
     

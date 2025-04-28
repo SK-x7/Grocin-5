@@ -1,7 +1,6 @@
 const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
-//REVIEW - 
 
 const filterObj = (obj, ...allowedFields) => {
   let newObj = {};
@@ -50,21 +49,6 @@ exports.deleteMe = catchAsync(async(req,res,next)=>{
     })
 })
 
-//FIXME - old one
-exports.getAUser=catchAsync(async(req,res,next)=>{
-  if(!req.body.email){
-    return next(new AppError("please provide email",401));
-  }
-  const user = await User.findOne({email:req.body.email}).populate('reviews').populate('orders').populate('orders.products.productId');
-  if(!user) return next(new AppError("There is no account with this email,check again",401));
-  
-  res.status(200).json({
-    status: 'success',
-    user
-  })
-  
-  
-})
 
 exports.isLoggedIn=catchAsync(async(req,res,next)=>{
   console.log("HEYy");
@@ -189,3 +173,282 @@ exports.updateUser =catchAsync(async (req, res, next) => {
       }
     })
   })
+  
+  exports.addRemoveSavedAddresses = catchAsync(async (req,res,next)=>{
+    console.log(req.params);
+    console.log(req.body);
+    if(!req.params.id)    return next(new AppError("please provide id of user to update",404))
+
+    if((req.params.action!=="add")&&(req.params.action!=='remove')) return next(new AppError(`only Add and Remove actions are valid`,404))
+    
+    if(req.params.action==='add'){
+        if(req.body.length===0){
+            return next(new AppError(`please provide address to add`,404))
+        }
+        
+        
+        const user = await User.findById(req.params.id);
+        
+        const newAddresses = req.body.addresses.filter((newAddress) => {
+          return !user.addresses.some(existingAddress => 
+              existingAddress.label === newAddress.label &&
+              existingAddress.address === newAddress.address
+          );
+      });
+        
+      if (newAddresses.length === 0) {
+        return next(new AppError('All provided addresses are duplicates', 400));
+    }
+        // console.log(req.user,'KEGHJKEGHJ')
+        // const user = await User.findById(req.params.id);
+        // console.log(existingAddresses,'HHKJJK');
+
+        
+      const updatedUser=await User.findByIdAndUpdate(req.params.id,
+        { $addToSet: { addresses: { $each: newAddresses} } },
+        {new:true,runValidators:true}
+      )   
+      // console.log(updatedUser)
+      
+      res.status(200).json({
+        message:"address added, updated successful",
+        data:{
+            updatedUser
+        }
+    })
+      
+    }else{
+        if(req.body.length===0){
+            return next(new AppError(`please provide address to remove`,404))
+        }
+        
+        const updatedUser=await User.findByIdAndUpdate(req.params.id,
+            { $pull: { addresses: {$or:req.body.addresses.map((adr)=>({
+              label:adr.label,
+              address:adr.address,
+            }))} } },            {new:true,runValidators:true}
+          )  
+          console.log(updatedUser,"⚠️⚠️")
+          
+          res.status(200).json({
+            message:"address removed, update successful",
+            data:{
+                updatedUser
+            }
+        })
+    }
+
+})
+
+
+
+exports.editSavedAddresses = catchAsync(async (req,res,next)=>{
+  console.log(req.params);
+  console.log(req.body);
+  if(!req.params.id)    return next(new AppError("please provide id of user to update",404))
+
+  // if((req.params.action!=="add")&&(req.params.action!=='remove')) return next(new AppError(`only Add and Remove actions are valid`,404))
+  
+  
+      if(req.body.data.length===0){
+          return next(new AppError(`please provide address data to update`,404))
+      }
+      if(!req.body.addressId){
+          return next(new AppError(`please provide id of address to update`,404))
+      }
+      
+
+      
+    const updatedUser=await User.findOneAndUpdate(
+      {_id:req.params.id,'addresses._id': req.body.addressId},
+      { $set: { 'addresses.$': req.body.data } }, // Use $ to refer to the matched element
+      { new: true, runValidators: true }
+    )   
+    
+    
+    if(!updatedUser)  return (next(new AppError("No user with this address id found to update",404)))
+    
+    // console.log(updatedUser)
+    
+    res.status(200).json({
+      message:"Address updated successful",
+      data:{
+          updatedUser
+      }
+  })
+    
+  
+  
+  // else{
+  //     if(req.body.length===0){
+  //         return next(new AppError(`please provide address to remove`,404))
+  //     }
+      
+  //     const updatedUser=await User.findByIdAndUpdate(req.params.id,
+  //         { $pull: { addresses: {$or:req.body.addresses.map((adr)=>({
+  //           label:adr.label,
+  //           address:adr.address,
+  //         }))} } },            {new:true,runValidators:true}
+  //       )  
+  //       console.log(updatedUser,"⚠️⚠️")
+        
+  //       res.status(200).json({
+  //         message:"address removed, update successful",
+  //         data:{
+  //             updatedUser
+  //         }
+  //     })
+  // }
+
+})
+
+
+exports.deleteSavedAddresses = catchAsync(async (req,res,next)=>{
+  console.log(req.params);
+  console.log(req.body);
+  if(!req.params.id)    return next(new AppError("please provide id of user to update",404))
+
+  
+  
+      
+      if(!req.body.addressId){
+          return next(new AppError(`please provide id of address to delete`,404))
+      }
+      
+
+      
+    const updatedUser=await User.findByIdAndUpdate(req.params.id,
+      { $pull: { addresses: {_id:req.body.addressId} } }, // Use $ to refer to the matched element
+      { new: true, runValidators: true }
+    )   
+    
+    
+    if(!updatedUser)  return (next(new AppError("No user with this address id found to delete",404)))
+    
+    // console.log(updatedUser)
+    
+    res.status(200).json({
+      message:"Address deleted successful",
+      data:{
+          updatedUser
+      }
+  })
+    
+  
+  
+
+})
+  
+  
+  
+//   exports.addRemoveSavedAddresses = catchAsync(async (req,res,next)=>{
+//     console.log(req.params);
+//     console.log(req.body);
+//     if(!req.params.id)    return next(new AppError("please provide id of user to update",404))
+
+//     if((req.params.action!=="add")&&(req.params.action!=='remove')) return next(new AppError(`only Add and Remove actions are valid`,404))
+    
+//     if(req.params.action==='add'){
+//         if(req.body.length===0){
+//             return next(new AppError(`please provide address to add`,404))
+//         }
+        
+        
+//         const temp = req.body.addresses.map(address => address);
+//         console.log(temp);
+//         // console.log(req.user,'KEGHJKEGHJ')
+//         // const user = await User.findById(req.params.id);
+//         // console.log(existingAddresses,'HHKJJK');
+
+        
+//       const updatedUser=await User.findByIdAndUpdate(req.params.id,
+//         { $addToSet: { addresses: { $each: req.body.addresses.map((adr)=>({
+//           label:adr.label,
+//           address:adr.address
+//         })) } } },
+//         {new:true,runValidators:true}
+//       )   
+//       // console.log(updatedUser)
+      
+//       res.status(200).json({
+//         message:"address added, updated successful",
+//         data:{
+//             updatedUser
+//         }
+//     })
+      
+//     }else{
+//         if(req.body.length===0){
+//             return next(new AppError(`please provide address to remove`,404))
+//         }
+        
+//         const updatedUser=await User.findByIdAndUpdate(req.params.id,
+//             { $pull: { addresses: {$or:req.body.addresses.map((adr)=>({
+//               label:adr.label,
+//               address:adr.address,
+//             }))} } },            {new:true,runValidators:true}
+//           )  
+//           console.log(updatedUser,"⚠️⚠️")
+          
+//           res.status(200).json({
+//             message:"address removed, update successful",
+//             data:{
+//                 updatedUser
+//             }
+//         })
+//     }
+
+// })
+  
+  // SECTION-----my original code
+//   exports.addRemoveSavedAddresses = catchAsync(async (req,res,next)=>{
+//     console.log(req.params);
+//     console.log(req.body);
+//     if(!req.params.id)    return next(new AppError("please provide id of user to update",404))
+
+//     if((req.params.action!=="add")&&(req.params.action!=='remove')) return next(new AppError(`only Add and Remove actions are valid`,404))
+    
+//     if(req.params.action==='add'){
+//         if(req.body.length===0){
+//             return next(new AppError(`please provide address to add`,404))
+//         }
+//       const updatedUser=await User.findByIdAndUpdate(req.params.id,
+//         { $addToSet: { addresses: { $each: req.body.addresses.map((adr)=>({
+//           label:adr.label,
+//           address:adr.address
+//         })) } } },
+//         {new:true,runValidators:true}
+//       )   
+//       console.log(updatedUser)
+      
+//       res.status(200).json({
+//         message:"address added, updated successful",
+//         data:{
+//             updatedUser
+//         }
+//     })
+      
+//     }else{
+//         if(req.body.length===0){
+//             return next(new AppError(`please provide address to remove`,404))
+//         }
+        
+//         const updatedUser=await User.findByIdAndUpdate(req.params.id,
+//             { $pull: { addresses: {$or:req.body.addresses.map((adr)=>({
+//               label:adr.label,
+//               address:adr.address,
+//             }))} } },            {new:true,runValidators:true}
+//           )  
+//           console.log(updatedUser,"⚠️⚠️")
+          
+//           res.status(200).json({
+//             message:"address removed, update successful",
+//             data:{
+//                 updatedUser
+//             }
+//         })
+//     }
+
+// })
+
+// !SECTION 

@@ -1,0 +1,22 @@
+.checkout-container{
+    background-color:#000; 
+    height:100%;
+    width:100%;
+    //display:flex;
+    //justify-content:center;
+    //align-items:center;
+}
+
+#stripe-element{
+    !height:100vh;
+    !width:100%;
+}
+
+#checkout{
+    background-color:blue;
+    width:100vw;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    margin:auto auto;
+}

@@ -1,5 +1,4 @@
 //inbuilt packages
-//REVIEW - 
 const express = require('express');
 const app= express();
 const rateLimit = require('express-rate-limit')
@@ -16,6 +15,8 @@ const subCategoryRouter = require('./routes/subCategoryRoute');
 const productRouter = require('./routes/productRoute');
 const reviewRouter = require('./routes/reviewRoute');
 const orderRouter = require('./routes/orderRoute');
+const dispatchManagerRouter = require('./routes/dispatchManagerRoute');
+const deliveryPartnerRouter = require('./routes/deliveryPartnerRoute');
 
 const globalErrorHandler=require('./controllers/errorController');
 const cookieParser = require("cookie-parser");
@@ -36,8 +37,6 @@ app.use((req, res, next) => {
       
       `${req.get('referer')}`,
       );
-
-
     next();
   });
 
@@ -86,6 +85,8 @@ app.use('/api/v1/subcategory', subCategoryRouter);
 app.use('/api/v1/product', productRouter);
 app.use('/api/v1/reviews', reviewRouter);
 app.use('/api/v1/orders', orderRouter);
+app.use('/api/v1/dispatch-manager', dispatchManagerRouter);
+app.use('/api/v1/delivery-partner', deliveryPartnerRouter);
 
 
 // app.route('user',user)

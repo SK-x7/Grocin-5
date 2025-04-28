@@ -92,8 +92,6 @@ function App() {
             <Route path="/testModal" element={<TestModals />} />
             <Route path="/saf" element={<SelectAddressFromOptions/>} />
             <Route path="/address" element={<AddAddress/>} />
-            <Route path="/map" element={<AddAddress/>} />
-              
               <Route path='/account' element={<ProfilePage/>}>
                 <Route path='' index element={<Navigate to="/account/orders" />}/>
                 <Route path='/account/orders' element={<OrderList/>}/>
@@ -112,8 +110,8 @@ function App() {
           <Route path="search" element={<SearchPage/>} />
           <Route path="x" element={<NoOrderYetPage/>} />
           <Route path="noorderfound" element={<NoOrderYetPage/>} />
-          <Route path="/checkout" element={<PaymentPage/>} />
-          <Route path="/stripe-checkout" element={<CheckoutForm />} />
+          <Route path="/checkout/:id" element={<PaymentPage/>} />
+          <Route path="/stripe-checkout/:id" element={<CheckoutForm />} />
           <Route path="/p" element={<PaymentSuccesful />} />
           <Route path="/o" element={<OrderArrived/>} />
           <Route path="/order/status/arrived" element={<OrderArrived/>} />

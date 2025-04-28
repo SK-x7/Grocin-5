@@ -14,7 +14,9 @@ router
   .post(authController.protect,orderController.createOrder);
   
 router.route("/user/:userId").get(authController.protect,orderController.getAllOrdersByUser)
+  router.route("/cancel-order/:id").patch(orderController.cancelOrder)
   router.route("/:id").get(orderController.getOrder).patch(orderController.updateOrder)
+  router.route("/verifyDelivery/:id/code/:code").post(orderController.verifyDeliveryCode)
 // router
 //   .route("/:id")
 //   .patch(

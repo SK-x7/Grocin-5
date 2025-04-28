@@ -30,7 +30,6 @@ router.patch(
     router.delete('/deleteMe', authController.protect, userController.deleteMe);
     
     
-    router.get("/getUser",userController.getAUser);
     router.get("/isLoggedIn",authController.protect,userController.isLoggedIn);
     router.post("/logout",authController.protect,userController.logout);
     
@@ -40,6 +39,17 @@ router.patch(
     router.route('/').get(userController.getAllUser).post(userController.createUser);
     router.route('/:id').get(userController.getUser).patch(userController.updateUser);
     router.route('/:id/getSavedAddresses').get(userController.getSavedAddressesOfUser);
+    
+    router.patch("/:id/updateSavedAddresses/:action",userController.addRemoveSavedAddresses)
+    router.patch("/:id/editSavedAddresses",userController.editSavedAddresses)
+    router.patch("/:id/deleteSavedAddresses",userController.deleteSavedAddresses)
+    // router.patch("/:id/updateSavedAddresses/:action",function (req,res,next) {
+    //     console.log(req.params);
+    //     res.status(200).json({
+    //         status: 'success',
+    //         message:"heyy from api"
+    //     })
+    // })
     
     
     module.exports = router;

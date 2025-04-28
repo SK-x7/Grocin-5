@@ -49,7 +49,9 @@ function Return() {
               {
               paymentStatus:"successful",
               paymentMode:"card",
-              orderStatus:"successful"
+              orderStatus:"arrived",
+              stripePaymentId:data.payment_intent
+              
             },
           ]
             mutate(mutateObj)

@@ -3,12 +3,16 @@ import { API_URL } from "../utils/constants";
 
 export const getCheckOutSession= async (obj)=>{
     console.log(obj);
-    const session= await axios.post(`${API_URL}/api/v1/orders/checkout/sessions`,obj,{
+    const res= await axios.post(`${API_URL}/api/v1/orders/checkout/sessions`,obj,{
         withCredentials:true
     })
-    console.log(session);
-    console.log(session.data.data.sessionId);
-    return session?.data?.data;
+    console.log(res);
+    const session=res?.data?.data?.session
+    if(session.url) window.location.href=session.url
+    else return; 
+    return res;
+    // console.log(session.data.data.sessionId);
+    // return session?.data?.data;
 }
 
 

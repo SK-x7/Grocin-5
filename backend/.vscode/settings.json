@@ -1,0 +1,132 @@
+{
+	"files.autoSave": "onFocusChange",
+	"editor.formatOnSave": true,
+	"editor.minimap.enabled": true,
+	"workbench.statusBar.visible": true,
+	"editor.formatOnSave": false,
+	"editor.wordWrap": "on",
+	"editor.trimAutoWhitespace": false,
+	"eslint.run": "onSave",
+
+	"workbench.colorCustomizations": {
+		"statusBar.background": "#333333",
+		"statusBar.noFolderBackground": "#333333",
+		"statusBar.debuggingBackground": "#263238"
+	},
+	"tabnine.experimentalAutoImports": true,
+	"[json]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"editor.accessibilitySupport": "on",
+	"liveServer.settings.donotShowInfoMsg": true,
+	"[java]": {
+		"editor.suggest.snippetsPreventQuickSuggestions": false
+	},
+	"[html]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"[python]": {
+		"editor.formatOnType": true
+	},
+	"html.format.indentHandlebars": true,
+	"html.format.indentInnerHtml": true,
+	"javascript.updateImportsOnFileMove.enabled": "always",
+	"security.workspace.trust.untrustedFiles": "open",
+	"git.suggestSmartCommit": false,
+	"workbench.startupEditor": "none",
+	"vscode-edge-devtools.webhint": false,
+	"workbench.colorTheme": "Winter is Coming (Dark Blue - No Italics)",
+	"workbench.iconTheme": "material-icon-theme",
+	"commentAnchors.tags.anchors": {
+	
+	
+	
+		"ANCHOR": {
+			"iconColor": "#069A8E",
+			"highlightColor": "#069A8E",
+			"scope": "workspace"
+		},
+		"TODO": {
+			"iconColor": "blue",
+			"highlightColor": "#3ea8ff",
+			"scope": "workspace"
+		},
+		"FIXME": {
+			"iconColor": "red",
+			"highlightColor": "#F44336",
+			"scope": "workspace"
+		},
+		"Remove": {
+			"iconColor": "#8c3b2d",
+            "isBold": true,
+			"highlightColor": "#000",
+            "backgroundColor": "#8c3b2d",
+            
+            
+			"scope": "workspace"
+		},
+		"DNT": {
+			"iconColor": "orange",
+			"highlightColor": "#FFA500",
+			"scope": "workspace"
+		},
+		"REVIEW": {
+			"iconColor": "green",
+			"highlightColor": "#64DD17",
+			"scope": "workspace"
+		},
+		"SECTION": {
+			"iconColor": "blurple",
+			"highlightColor": "#896afc",
+			"scope": "workspace",
+			"behavior": "region"
+		},
+		"LINK": {
+			"iconColor": "#2ecc71",
+			"highlightColor": "#2ecc71",
+			"scope": "workspace",
+			"behavior": "link"
+		},
+		"Remember": {
+			"iconColor": "#9bff00",
+			"highlightColor": "#9bff00",
+			"scope": "workspace"
+		}
+	},
+	"typescript.updateImportsOnFileMove.enabled": "always",
+	"prettier.useTabs": true,
+	"terminal.integrated.macOptionClickForcesSelection": true,
+	"diffEditor.experimental.showMoves": true,
+	"javascript.format.insertSpaceAfterSemicolonInForStatements": false,
+	"javascript.format.insertSpaceBeforeAndAfterBinaryOperators": false,
+	"typescript.format.enable": false,
+	"less.hover.documentation": false,
+	"editor.colorDecorators": false,
+	"outline.showStructs": false,
+	"outline.icons": false,
+	"commentAnchors.tags.matchPrefix": [
+		"<!--",
+		"//",
+		"/*",
+		"/**",
+		"*",
+		"#",
+		"{*"
+	],
+	"commentAnchors.tags.matchSuffix": [
+		"-->",
+		"*/",
+		"*}"
+	],
+	"eslint.validate": [
+		
+	],
+	"github.copilot.enable": {
+		"*": false,
+		"plaintext": false,
+		"markdown": false,
+		"scminput": false,
+		"typescriptreact": false
+	}
+}

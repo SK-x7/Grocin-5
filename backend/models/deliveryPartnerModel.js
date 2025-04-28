@@ -1,7 +1,3 @@
-//LTT - reactive the user
-// - check lecture 141 and try some features
-//REVIEW - 
-
 const crypto = require('crypto');
 const mongoose = require('mongoose');
 const  validator = require('validator');
@@ -12,7 +8,7 @@ const catchAsync = require('../utils/catchAsync');
 
 
 
-const userSchema = new mongoose.Schema({
+const deliveryPartnerSchema = new mongoose.Schema({
     name:{
         type: String,
         required: [true,'please tell us your name!']
@@ -57,19 +53,16 @@ const userSchema = new mongoose.Schema({
         default:true,
         select:false,
     } ,
-     addresses: [{
-        label: {
-          type: String,
-        //   unique:true,
-          
-          //required: true,
-        },
-        address: {
-          type: String,
-        //   unique: true,
-          //required: true,
-        }
-      }],
+    status: {
+        type: String,
+        enum: ['idle', 'available', 'delivering'],
+        default: 'available',
+      },
+      currentOrder: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Order',
+        default: null,
+      },
 },
 {
     toJSON: { virtuals: true },
@@ -78,28 +71,9 @@ const userSchema = new mongoose.Schema({
 
 )
 
-userSchema.virtual('reviews',{
-    ref:"Review",
-    foreignField:'user',
-    localField:"_id",
-})
 
-userSchema.virtual('orders',{
-    ref:"Order",
-    foreignField:"user",
-    localField:"_id",
-})
 
-// userSchema.index({ 'addresses.label': 1, 'addresses.address': 1 }, { unique: true });
-userSchema.index({ 'addresses.label': 1, 'addresses.address': 1 }, { unique: true })
-// productSchema.virtual('reviews',{
-//     ref:'Review',
-//     foreignField:'product',
-//     localField:"_id"
-    
-//   })
-
-userSchema.pre('save',async function(next){
+deliveryPartnerSchema.pre('save',async function(next){
     if(!this.isModified('password')) return next();
     this.password =await bcrypt.hash(this.password,13);
     this.passwordConfirm=undefined;
@@ -108,7 +82,7 @@ userSchema.pre('save',async function(next){
 
 
 
-userSchema.pre('save',function (next) {
+deliveryPartnerSchema.pre('save',function (next) {
     if(!this.isModified('password')||this.isNew)
     return next();    
     this.passwordChangedAt = Date.now()-1000;
@@ -116,14 +90,14 @@ userSchema.pre('save',function (next) {
 })
 
 
-userSchema.pre('find',function (next) {
+deliveryPartnerSchema.pre('find',function (next) {
     this.find({active: {$ne:false}});
     next();
 })
 
 
 
-userSchema.methods.correctPassword = async function (candidatePassword,userPassword) {
+deliveryPartnerSchema.methods.correctPassword = async function (candidatePassword,userPassword) {
     console.log("1044444444444444444444444444444444444444")
     console.log(candidatePassword,userPassword);
     // console.log(typeof candidatePassword);
@@ -132,7 +106,7 @@ userSchema.methods.correctPassword = async function (candidatePassword,userPassw
     return await bcrypt.compare(candidatePassword,userPassword);
 }
 
-userSchema.methods.changesPasswordAfter = function(JWTTimestamp){
+deliveryPartnerSchema.methods.changesPasswordAfter = function(JWTTimestamp){
     if(this.passwordChangedAt){
         const changedTimestamp = parseInt(this.passwordChangedAt.getTime()/1000,10);
         
@@ -143,7 +117,7 @@ userSchema.methods.changesPasswordAfter = function(JWTTimestamp){
 }
 
 
-userSchema.methods.createPasswordResetToken =function () {
+deliveryPartnerSchema.methods.createPasswordResetToken =function () {
     const resetToken = crypto.randomBytes(32).toString('hex');
     this.passwordResetToken=crypto.createHash('sha256').update(resetToken).digest('hex');
     
@@ -155,5 +129,5 @@ userSchema.methods.createPasswordResetToken =function () {
 
 
 
-const User = mongoose.model("User",userSchema);
-module.exports = User;
+const DeliveryPartner = mongoose.model("DeliveryPartner",deliveryPartnerSchema);
+module.exports = DeliveryPartner;
