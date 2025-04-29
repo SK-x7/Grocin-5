@@ -3,6 +3,7 @@ const catchAsync = require("../utils/catchAsync")
 const AppError= require("../utils/appError")
 const Order = require("../models/orderModel");
 const DeliveryPartner=require("../models/deliveryPartnerModel");
+const Product=require("../models/productModel");
 // exports.getCheckOutSession=catchAsync(async(req,res,next)=>{
 
 //     // console.log(port);
@@ -99,6 +100,21 @@ exports.getAllOrders=catchAsync(async(req,res,next)=>{
 
 exports.createOrder=catchAsync(async(req,res,next)=>{
     console.log(req.body)
+    const {products} = req?.body
+    // Check and decrement availableStock for each product
+    for (const item of products) {
+        const product = await Product.findById(item.productId);
+        if (!product) {
+            return next(new AppError(`Product with ID ${item.productId} not found`, 404));
+        }
+
+        if (product.availableStock < item.quantity) {
+            return next(new AppError(`Insufficient stock for product: ${product.name}`, 400));
+        }
+
+        product.availableStock -= item.quantity;
+        await product.save();
+    }
     const obj={
         user: req?.user?.id,
         products: req?.body?.products,
@@ -106,7 +122,6 @@ exports.createOrder=catchAsync(async(req,res,next)=>{
         handlingCharge:req?.body?.handlingCharge,
         tipForDeliveryPartner:req?.body?.tipForDeliveryPartner,
         totalPrice:req?.body?.totalPrice,
-        
     }
     console.log(obj);
     
@@ -225,7 +240,13 @@ exports.verifyDeliveryCode = catchAsync(async (req, res, next) => {
     if (order.deliveryCode !== deliveryCode) {
       return next(new AppError('Invalid delivery code', 400));
     }
-  
+    //since its a succesful delivery we will update the original stock
+    for (const item of order.products) {
+        const product = await Product.findById(item.productId._id);
+        product.stock -= item.quantity;
+        await product.save();
+    }
+
     order.orderStatus = 'delivered';
     order.paymentStatus = 'successful';
     const deliveryPartner = await DeliveryPartner.findById(order.assignedDeliveryPartner);
@@ -253,7 +274,7 @@ exports.verifyDeliveryCode = catchAsync(async (req, res, next) => {
         return next(new AppError('Please provide the order ID to cancel', 400));
     }
 
-    const order = await Order.findById(orderId);
+    const order = await Order.findById(orderId).populate('products.productId');
 
     if (!order) {
         return next(new AppError('Order not found', 404));
@@ -263,6 +284,21 @@ exports.verifyDeliveryCode = catchAsync(async (req, res, next) => {
     if (order.orderStatus !== 'arrived') {
         return next(new AppError('Order can only be canceled when its status is "arrived"', 400));
     }
+    
+    //increment the available stock
+    for (const item of order.products) {
+        const product = await Product.findById(item.productId._id);
+
+        product.availableStock += item.quantity;
+
+        // Ensure availableStock does not exceed stock
+        if (product.availableStock > product.stock) {
+            product.availableStock = product.stock;
+        }
+
+        await product.save();
+    }
+    
 
     // If payment was successful, initiate a refund
     if (order.paymentStatus === 'successful' && order.paymentMode === "card") {

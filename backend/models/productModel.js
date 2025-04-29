@@ -39,10 +39,15 @@ const productSchema = new mongoose.Schema(
     stock: {
       type: Number,
       select: false,
+      required: true,
+      min: [0, 'Stock cannot be less than 0'],
     },
     availableStock: {
       type: Number,
-      select: false,
+      select: true,
+      required: true,
+      min: [0, 'Available stock cannot be less than 0'],
+      
     },
     isInStock: {
       type: Boolean,
@@ -121,44 +126,35 @@ productSchema.virtual("priceAfterDiscount").get(function (next) {
   return Math.round(discountedValue);
 });
 
-// productSchema.virtual('priceAfterDiscount').get(function() {
-//   return this.price - Math.round(this.price * this.discount / 100);
-// });
+productSchema.pre('save', function (next) {
+  // Ensure availableStock is never less than 0
+  if (this.availableStock < 0) {
+      return next(new AppError('Available stock cannot be less than 0'));
+  }
+  next();
+});
 
-// productSchema.path('priceAfterDiscount').validate(function (value) {
-//   return value <= this.price;
-// }, 'Discount should not exceed the product price.');
+
+productSchema.pre('save', function (next) {
+  // Ensure availableStock never exceeds stock
+  if (this.availableStock > this.stock) {
+      return next(new AppError('Available stock cannot exceed original stock'));
+  }
+
+  // Set isInStock based on availableStock
+  if (this.availableStock <= 0) {
+      this.isInStock = false; // Out of stock
+  } else if (this.availableStock < this.stock * 0.1) {
+      this.isInStock = false; // Low stock threshold (10% of original stock)
+  } else {
+      this.isInStock = true; // In stock
+  }
+
+  next();
+});
 
 productSchema.index({ name: 1, category: 1, tags: 1 });
 
 const Product = mongoose.model("Product", productSchema);
 
 module.exports = Product;
-
-
-// server.js or app.js
-// const express = require('express');
-// const mongoose = require('mongoose');
-// const Product = require('./models/productModel'); // Assuming you have a Product model
-
-// const app = express();
-
-// mongoose.connect('your_mongo_db_connection_string', { useNewUrlParser: true, useUnifiedTopology: true });
-
-// app.get('/search', async (req, res) => {
-//     const query = req.query.q;
-//     if (!query) {
-//         return res.status(400).json({ error: 'Query parameter is required' });
-//     }
-//     try {
-//         const results = await Product.find({ name: new RegExp(query, 'i') }); // Case insensitive search
-//         res.json(results);
-//     } catch (error) {
-//         res.status(500).json({ error: 'Internal Server Error' });
-//     }
-// });
-
-// const PORT = process.env.PORT || 5000;
-// app.listen(PORT, () => {
-//     console.log(`Server is running on port ${PORT}`);
-// });
